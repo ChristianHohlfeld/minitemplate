@@ -1,0 +1,52 @@
+<!-- sidebarDefaultComponent.html -->
+<div id="sidebarComponent" data-state="open" class="bg-gray-200 w-64 flex flex-col h-full fixed top-0 left-0 transform transition-transform duration-300 ease-in-out z-10">
+    <!-- Sidebar Header (integrated into the sidebar) -->
+    <div class="bg-gray-300 h-16 flex items-center justify-between px-4">
+        <!-- Hamburger Icon (Always Visible) -->
+        <button id="sidebarToggle" class="toggleSidebarButton text-gray-800 text-2xl focus:outline-none" aria-label="Toggle Sidebar">
+            ☰
+        </button>
+        <h2 class="text-lg font-semibold text-gray-800">Sidebar</h2>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="flex-1 p-4">
+        <ul class="space-y-2">
+            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Home</a></li>
+            <li><a href="#" class="block text-gray-800 hover:text-gray-600">About</a></li>
+            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Services</a></li>
+            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 bg-gray-300">
+        <p class="text-sm text-gray-700">&copy; 2023 My Website</p>
+    </div>
+
+    <script>
+        // Self-contained JavaScript for sidebar toggle
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebar = document.getElementById('sidebarComponent');
+                const toggleButton = document.getElementById('sidebarToggle');
+                const content = document.getElementById('contentComponent');
+
+                function toggleSidebar() {
+                    const state = sidebar.getAttribute('data-state');
+                    if (state === 'open') {
+                        sidebar.classList.add('-translate-x-full');
+                        sidebar.setAttribute('data-state', 'closed');
+                        content.classList.remove('ml-64');
+                    } else {
+                        sidebar.classList.remove('-translate-x-full');
+                        sidebar.setAttribute('data-state', 'open');
+                        content.classList.add('ml-64');
+                    }
+                }
+
+                toggleButton.addEventListener('click', toggleSidebar);
+            });
+        })();
+    </script>
+</div>

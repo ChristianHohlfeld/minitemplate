@@ -1,0 +1,51 @@
+<!-- contentDefaultComponent.html -->
+<div id="contentComponent" class="flex-1 bg-gray-100 ml-64 transition-all duration-300 ease-in-out">
+    <!-- Content Header (with 0 padding) -->
+    <header id="contentHeader" class="bg-blue-200 h-16 flex items-center justify-between w-full p-0 px-4">
+        <!-- Hamburger Icon (Always Visible) -->
+        <button id="contentToggle" class="toggleSidebarButton text-gray-800 text-2xl focus:outline-none" aria-label="Toggle Sidebar">
+            ☰
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800">Content Header</h1>
+
+        <!-- Model Selector -->
+        <div>
+            <select id="modelDropdown" class="bg-gray-300 text-gray-800 p-2 rounded focus:outline-none">
+                <option value="" disabled selected>Select Model</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Main Content Area (with 1.5rem padding) -->
+    <div class="mt-4 p-6 bg-white rounded shadow">
+        <p class="text-gray-700">
+            Welcome to the main content area. Add your custom content here to display on your webpage.
+        </p>
+    </div>
+
+    <script>
+        // Self-contained JavaScript for content toggle
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebar = document.getElementById('sidebarComponent');
+                const toggleButton = document.getElementById('contentToggle');
+                const content = document.getElementById('contentComponent');
+
+                function toggleSidebar() {
+                    const state = sidebar.getAttribute('data-state');
+                    if (state === 'open') {
+                        sidebar.classList.add('-translate-x-full');
+                        sidebar.setAttribute('data-state', 'closed');
+                        content.classList.remove('ml-64');
+                    } else {
+                        sidebar.classList.remove('-translate-x-full');
+                        sidebar.setAttribute('data-state', 'open');
+                        content.classList.add('ml-64');
+                    }
+                }
+
+                toggleButton.addEventListener('click', toggleSidebar);
+            });
+        })();
+    </script>
+</div>
