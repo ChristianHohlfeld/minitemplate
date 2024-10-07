@@ -1,12 +1,16 @@
 <!-- contentDefaultComponent.html -->
 <div id="contentComponent" class="flex flex-col flex-1 bg-gray-100 transition-all duration-300 ease-in-out md:ml-64">
-    <!-- Content Header -->
+    <!-- Content Header (Updated Layout) -->
     <header id="contentHeader" class="bg-blue-200 h-16 flex items-center justify-between w-full p-0 px-4">
-        <!-- Hamburger Icon (Visible on all screen sizes to toggle sidebar) -->
-        <button class="toggleSidebarButton text-gray-800 text-2xl focus:outline-none" aria-label="Toggle Sidebar">
-            ☰
-        </button>
-        <h1 class="text-lg font-semibold text-gray-800">Content Header</h1>
+        <!-- Left side: Hamburger and Content Header label -->
+        <div class="flex items-center space-x-4">
+            <!-- Hamburger Icon (Visible when sidebar is collapsed) -->
+            <button id="contentHamburger" class="toggleSidebarButton text-gray-800 text-2xl focus:outline-none hidden" aria-label="Toggle Sidebar">
+                ☰
+            </button>
+            <!-- Content Header Label -->
+            <h1 class="text-lg font-semibold text-gray-800">Content Header</h1>
+        </div>
 
         <!-- Model Selector -->
         <div>
