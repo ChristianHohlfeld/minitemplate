@@ -4,10 +4,25 @@
     <!-- Meta tags and title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>page</title>
+<title>yourpage</title>
 
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Config for colors, etc. -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1D4ED8',  // Custom blue color
+                        secondary: '#16A34A',  // Custom green color
+                        accent: '#F59E0B',  // Custom orange color
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body class="flex flex-col min-h-screen">
     <!-- Main Content and Sidebar -->
