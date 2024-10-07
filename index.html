@@ -1,59 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Meta tags and title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>yourpage</title>
+<title>y</title>
 
-    <!-- Tailwind CSS via CDN -->
+    <!-- DaisyUI with Tailwind CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.12/dist/full.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Custom Tailwind Config for colors, etc. -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1D4ED8',  // Custom blue color
-                        secondary: '#16A34A',  // Custom green color
-                        accent: '#F59E0B',  // Custom orange color
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="flex flex-col min-h-screen">
-    <!-- Main Content and Sidebar -->
+<body class="flex flex-col min-h-screen" data-theme="cupcake">
     <div class="flex flex-1">
         <!-- Sidebar -->
         <!-- sidebarDefaultComponent.html -->
-<div id="sidebarComponent" data-state="closed" class="bg-gray-200 w-64 h-full fixed top-0 left-0 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-10">
+<div id="sidebarComponent" data-state="closed" class=" w-64 h-full fixed top-0 left-0 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-10">
     <!-- Sidebar Header -->
-    <div class="bg-gray-300 h-16 flex items-center justify-between px-4">
+    <div class="h-16 flex items-center justify-between px-4">
         <!-- Hamburger Icon (Always Visible) -->
-        <button class="toggleSidebarButton text-gray-800 text-2xl focus:outline-none" aria-label="Toggle Sidebar">
+        <button class="toggleSidebarButton text-white text-2xl focus:outline-none" aria-label="Toggle Sidebar">
             ☰
         </button>
-        <h2 class="text-lg font-semibold text-gray-800">Sidebar</h2>
+        <h2 class="text-lg">Sidebar</h2>
     </div>
 
     <!-- Sidebar Navigation -->
     <nav class="flex-1 p-4">
-        <ul class="space-y-2">
-            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Home</a></li>
-            <li><a href="#" class="block text-gray-800 hover:text-gray-600">About</a></li>
-            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Services</a></li>
-            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Contact</a></li>
+        <ul class="menu w-full">
+            <li><a href="#" class="">Home</a></li>
+            <li><a href="#" class="">About</a></li>
+            <li><a href="#" class="">Services</a></li>
+            <li><a href="#" class="">Contact</a></li>
         </ul>
     </nav>
 
     <!-- Sidebar Footer -->
-    <div class="bg-gray-300 h-16 flex items-center justify-center">
-        <p class="text-sm text-gray-700">&copy; 2023 My Website</p>
+    <div class="h-16 flex items-center justify-center">
+        <p class="text-sm">&copy; 2023 My Website</p>
     </div>
-
     <!-- Self-contained JavaScript for Sidebar Toggle and Breakpoint Detection -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -110,39 +93,56 @@
 </div>
 
         <!-- Content -->
-        <!-- contentDefaultComponent.html -->
-<div id="contentComponent" class="flex flex-col flex-1 bg-gray-100 transition-all duration-300 ease-in-out md:ml-64">
-    <!-- Content Header (Updated Layout) -->
-    <header id="contentHeader" class="bg-blue-200 h-16 flex items-center justify-between w-full p-0 px-4">
-        <!-- Left side: Hamburger and Content Header label -->
+        <div id="contentComponent" class="flex flex-col flex-1 transition-all duration-300 ease-in-out md:ml-64">
+    <!-- Content Header -->
+    <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4">
         <div class="flex items-center space-x-4">
-            <!-- Hamburger Icon (Visible when sidebar is collapsed) -->
-            <button id="contentHamburger" class="toggleSidebarButton text-gray-800 text-2xl focus:outline-none hidden" aria-label="Toggle Sidebar">
+            <button id="contentHamburger" class="toggleSidebarButton text-white text-2xl focus:outline-none hidden" aria-label="Toggle Sidebar">
                 ☰
             </button>
-            <!-- Content Header Label -->
-            <h1 class="text-lg font-semibold text-gray-800">Content Header</h1>
+            <h1 class="text-lg">Header</h1>
         </div>
 
         <!-- Model Selector -->
         <div>
-            <select id="modelDropdown" class="bg-gray-300 text-gray-800 p-2 rounded focus:outline-none">
+            <select id="modelDropdown" class="select">
                 <option value="" disabled selected>Select Model</option>
             </select>
         </div>
     </header>
 
     <!-- Main Content Area -->
-    <div class="flex-1 mt-4 p-6 bg-white rounded shadow">
-        <p class="text-gray-700">
-            Welcome to the main content area. Add your custom content here to display on your webpage.
+    <div class="flex-1 p-6 rounded-lg shadow">
+        <p class="">
+            <div id="buttonComponent" class="flex justify-center items-center p-4">
+    <button class="btn">
+        Click Me
+    </button>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const button = document.querySelector('#buttonComponent .btn');
+            button.addEventListener('click', function() {
+                alert('Button Clicked!');
+            });
+        });
+    </script>
+</div>
         </p>
     </div>
 
     <!-- Content Footer -->
-    <footer class="bg-blue-200 h-16 flex items-center justify-center">
-        <p class="text-lg font-semibold text-gray-800">&copy; 2023 My Website. All rights reserved.</p>
+    <footer class="h-16 flex items-center justify-center">
+        <p class="text-lg">&copy; 2023. All rights reserved.</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modelDropdown = document.getElementById('modelDropdown');
+            modelDropdown.addEventListener('change', function() {
+                console.log('Model selected: ' + this.value);
+            });
+        });
+    </script>
 </div>
     </div>
 </body>

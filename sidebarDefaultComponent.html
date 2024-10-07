@@ -1,29 +1,28 @@
 <!-- sidebarDefaultComponent.html -->
-<div id="sidebarComponent" data-state="closed" class="bg-gray-200 w-64 h-full fixed top-0 left-0 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-10">
+<div id="sidebarComponent" data-state="closed" class=" w-64 h-full fixed top-0 left-0 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-10">
     <!-- Sidebar Header -->
-    <div class="bg-gray-300 h-16 flex items-center justify-between px-4">
+    <div class="h-16 flex items-center justify-between px-4">
         <!-- Hamburger Icon (Always Visible) -->
-        <button class="toggleSidebarButton text-gray-800 text-2xl focus:outline-none" aria-label="Toggle Sidebar">
+        <button class="toggleSidebarButton text-white text-2xl focus:outline-none" aria-label="Toggle Sidebar">
             ☰
         </button>
-        <h2 class="text-lg font-semibold text-gray-800">Sidebar</h2>
+        <h2 class="text-lg">Sidebar</h2>
     </div>
 
     <!-- Sidebar Navigation -->
     <nav class="flex-1 p-4">
-        <ul class="space-y-2">
-            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Home</a></li>
-            <li><a href="#" class="block text-gray-800 hover:text-gray-600">About</a></li>
-            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Services</a></li>
-            <li><a href="#" class="block text-gray-800 hover:text-gray-600">Contact</a></li>
+        <ul class="menu w-full">
+            <li><a href="#" class="">Home</a></li>
+            <li><a href="#" class="">About</a></li>
+            <li><a href="#" class="">Services</a></li>
+            <li><a href="#" class="">Contact</a></li>
         </ul>
     </nav>
 
     <!-- Sidebar Footer -->
-    <div class="bg-gray-300 h-16 flex items-center justify-center">
-        <p class="text-sm text-gray-700">&copy; 2023 My Website</p>
+    <div class="h-16 flex items-center justify-center">
+        <p class="text-sm">&copy; 2023 My Website</p>
     </div>
-
     <!-- Self-contained JavaScript for Sidebar Toggle and Breakpoint Detection -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
