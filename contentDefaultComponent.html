@@ -8,20 +8,12 @@
             <h1 class="text-lg">Header</h1>
         </div>
 
-        <!-- Model Selector -->
-        <div>
-            <select id="modelDropdown" class="select">
-                <option value="" disabled selected>Select Model</option>
-            </select>
-        </div>
     </header>
 
     <!-- Main Content Area -->
     <div class="flex-1 p-6 rounded-lg shadow">
-        <p class="">
-            {{buttonComponent}}
-        </p>
-    </div>
+        {{chatComponent}}
+   </div>
 
     <!-- Content Footer -->
     <footer class="h-16 flex items-center justify-center">
@@ -29,11 +21,5 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modelDropdown = document.getElementById('modelDropdown');
-            modelDropdown.addEventListener('change', function() {
-                console.log('Model selected: ' + this.value);
-            });
-        });
     </script>
 </div>

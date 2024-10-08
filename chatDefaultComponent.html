@@ -1,8 +1,7 @@
 <!-- chatDefaultComponent.html -->
-<div id="chatComponent" class="flex justify-center items-center w-full h-full">
-  <!-- Chat container with max width and scrollable content -->
-  <div class="max-w-md w-full h-full overflow-y-auto mx-auto flex flex-col justify-start">
-    <!-- Chat bubbles -->
+<div id="chatComponent" class="flex flex-col justify-between w-full h-full max-w-2xl mx-auto">
+  <!-- Chat bubbles container (scrollable) -->
+  <div class="flex-1 overflow-y-auto p-4">
     <div class="chat chat-start">
       <div class="chat-bubble">
         It's over Anakin,
@@ -16,6 +15,9 @@
       </div>
     </div>
   </div>
+  
+  <!-- Chat input at the bottom -->
+  {{chatinputComponent}}
 
   <!-- Inline Script for Chat Component Behavior -->
   <script>
