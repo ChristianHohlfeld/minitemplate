@@ -1,34 +1,33 @@
 
-# Self-Contained Component Structure and Usage
+# **MiniTemplate Project**
 
-This project is based on a flexible, component-based architecture, utilizing **Tailwind CSS** and **DaisyUI**. The idea is to create self-contained, reusable components that include both their HTML structure and any associated JavaScript in one file.
+This project is a component-based system that uses **Tailwind CSS** and **DaisyUI** to help developers quickly create and customize web pages. Each component is self-contained, meaning it includes its own HTML structure, CSS classes, and JavaScript functionality.
 
-## CSS Framework & Component Library Used
+## **Technologies Used**
+- **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
+- **DaisyUI**: A component library for Tailwind CSS that provides pre-designed UI elements.
 
-1. **Tailwind CSS**: A utility-first CSS framework used for styling components.
-2. **DaisyUI**: A component library built on Tailwind CSS that provides pre-built UI components with customizable themes.
+## **Component System**
+Each component in this system follows a simple structure, making it easy to create, reuse, and customize. Components include:
+- **HTML structure**: The basic structure of the component.
+- **CSS classes**: Using Tailwind and DaisyUI classes for styling.
+- **JavaScript functionality**: Inline JavaScript for handling component-specific behavior.
 
-## Basic Idea of Self-Contained Components
+### **Types of Components**
+1. **Default Components**: These are provided by the system and can be used without modification.
+2. **Regular Components**: User-created components that can be customized to fit specific needs.
 
-Each component follows these rules where:
-- The HTML structure is defined directly in the component file.
-- JavaScript is included inside the root <div> of the component using a `<script>` tag.
-- Components are fully self-contained, making them reusable across different parts of the project.
-
-## Sample Component Definition
-
-Here is an example of a **self-contained component** for a button:
-
-### buttonDefaultComponent.html
+### **Self-contained Component Example**
+Here’s an example of a self-contained component:
 
 ```html
-<div id="buttonComponent" class="flex justify-center items-center p-4">
+<div id="exampleComponent" class="flex justify-center items-center p-4">
     <button class="btn btn-primary">
         Click Me
     </button>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const button = document.querySelector('#buttonComponent .btn');
+            const button = document.querySelector('#exampleComponent .btn');
             button.addEventListener('click', function() {
                 alert('Button Clicked!');
             });
@@ -37,32 +36,69 @@ Here is an example of a **self-contained component** for a button:
 </div>
 ```
 
-- The component contains HTML (the button) and the necessary JavaScript (an event listener to show an alert on button click).
-- It's fully self-contained, meaning this file alone can provide the functionality wherever it's included.
+## **Theming with DaisyUI**
+You can choose from a list of available themes provided by DaisyUI. These themes modify the look and feel of the entire application by changing things like color schemes and font styles.
 
-## How to Create a Component
+### **Available Themes**
+Here are the available themes:
+- light
+- dark
+- cupcake
+- bumblebee
+- emerald
+- corporate
+- synthwave
+- retro
+- cyberpunk
+- valentine
+- halloween
+- garden
+- forest
+- aqua
+- lofi
+- pastel
+- fantasy
+- wireframe
+- black
+- luxury
+- dracula
+- cmyk
+- autumn
+- business
+- acid
+- lemonade
+- night
+- coffee
+- winter
+- dim
+- nord
+- sunset
 
-When running the `generate.sh` script, you are prompted to choose whether to use **default** components or **regular** components. 
+### **How to Apply a Theme**
+To apply a theme, generate your page with the following steps:
+1. Run the `generate.sh` script and pass the theme name as an argument.
+```bash
+./generate.sh [themeName]
+```
+If no theme is provided, the default theme `business` will be used.
 
-- **Default Components**: These are pre-defined components that follow specific styles and behavior, such as `buttonDefaultComponent.html` or `chatDefaultComponent.html`. These are used when the user selects 'y' (yes) during the prompt in the `generate.sh` script.
-  
-- **Regular Components**: These components do not have the `Default` suffix and offer more customization. When the user selects 'n' (no) during the prompt, the script expects that the regular components like `buttonComponent.html` or `chatComponent.html` already exist in the directory.
+## **How to Create Components**
+When you run the `generate.sh` script, you'll be prompted to choose between default or regular components:
+- **Default Components**: These are system-provided components.
+- **Regular Components**: Customizable components that you create.
 
-### Creating Default and Regular Components
+### **Component Creation Process**
+1. To use **default components**, simply run the `generate.sh` script and answer `y` when prompted.
+2. If you want to create your own components, answer `n`, and make sure the regular component files (e.g., `sidebarComponent.html`, `contentComponent.html`) exist in the root directory.
 
-1. **Default Component**: Use the `Default` suffix in the filename to signify it's a pre-built component. For example, `sidebarDefaultComponent.html`.
-2. **Regular Component**: Remove the `Default` suffix for custom-built components. For example, `sidebarComponent.html`.
+## **Generating the Project**
+1. Run the `generate.sh` script to generate the `index.html` page based on the template and components you’ve created.
+```bash
+./generate.sh
+```
 
-## Example Workflow for Creating a Button Component
+2. Follow the prompts to choose the page title, theme, and component usage.
 
-- **Default**: `buttonDefaultComponent.html`
-- **Regular**: `buttonComponent.html`
+---
 
-1. Run `generate.sh`.
-2. The script will ask: "Do you want to use default components for sidebar, content, and footer? (y/n)"
-3. If **y**, the script will include default components like `buttonDefaultComponent.html`.
-4. If **n**, the script will look for custom components without the `Default` suffix.
-
-## Conclusion
-
-This system provides a flexible and scalable approach to web development using reusable, self-contained components. By leveraging Tailwind CSS and DaisyUI, you gain access to powerful utility classes and pre-built UI components, while the self-contained nature of your components keeps your project clean and modular.
+This setup allows for fast prototyping and a flexible, component-based design approach using Tailwind CSS and DaisyUI.
