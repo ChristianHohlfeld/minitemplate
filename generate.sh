@@ -27,38 +27,18 @@ fi
 # Prompt the user for the page title
 read -p "Enter the title for your page: " PAGE_TITLE
 
-# Prompt the user if they want to use default components
-read -p "Do you want to use default components for sidebar, content, and footer? (y/n): " USE_DEFAULT
-
-# Function to ensure default components exist
-create_default_components() {
-    for component in sidebarDefaultComponent.html contentDefaultComponent.html footerDefaultComponent.html; do
-        if [[ ! -f "$component" ]]; then
-            echo "Error: Default component '$component' does not exist. Please create it before proceeding."
-            exit 1
-        fi
-    done
-}
-
-# Function to ensure regular components exist
-ensure_regular_components() {
+# Function to ensure all required components exist
+ensure_components() {
     for component in sidebarComponent.html contentComponent.html footerComponent.html; do
         if [[ ! -f "$component" ]]; then
-            echo "Error: Regular component '$component' not found in the root directory."
+            echo "Error: Component '$component' not found. Please create it before proceeding."
             exit 1
         fi
     done
 }
 
-# Check components based on user choice
-if [[ "$USE_DEFAULT" =~ ^[Yy]$ ]]; then
-    create_default_components
-elif [[ "$USE_DEFAULT" =~ ^[Nn]$ ]]; then
-    ensure_regular_components
-else
-    echo "Invalid input. Please enter y or n."
-    exit 1
-fi
+# Ensure all components are present
+ensure_components
 
 # Create or overwrite the output file
 > "$OUTPUT_FILE"
@@ -83,13 +63,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     # Use regex to find all placeholders in the line
     while [[ "$line" =~ \{\{([a-zA-Z0-9]+)\}\} ]]; do
         COMPONENT_ID="${BASH_REMATCH[1]}"
-
-        # Determine which component file to use
-        if [[ "$USE_DEFAULT" =~ ^[Yy]$ ]]; then
-            COMPONENT_FILE="${COMPONENT_ID%Component}DefaultComponent.html"
-        else
-            COMPONENT_FILE="${COMPONENT_ID}.html"
-        fi
+        COMPONENT_FILE="${COMPONENT_ID}.html"
 
         # Check if the component file exists
         if [[ -f "$COMPONENT_FILE" ]]; then
