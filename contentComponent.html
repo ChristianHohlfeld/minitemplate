@@ -1,4 +1,4 @@
-<div id="contentComponent" class="flex flex-col flex-1 transition-all duration-300 ease-in-out md:ml-64">
+<div id="contentComponent" class="flex flex-col flex-1 transition-all duration-300 ease-in-out md:ml-64 h-screen">
     <!-- Content Header -->
     <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4">
         <div class="flex items-center space-x-4">
@@ -10,7 +10,7 @@
     </header>
 
     <!-- Main Content Area -->
-    <div class="flex-1 p-6 rounded-lg shadow">
+    <div class="flex flex-1 flex-col p-6 rounded-lg shadow overflow-hidden">
         <!-- Chat component -->
         {{chatComponent}}
     </div>
@@ -19,7 +19,4 @@
     <footer class="h-16 flex items-center justify-center">
         <p class="text-lg">&copy; 2023. All rights reserved.</p>
     </footer>
-
-    <script>
-    </script>
 </div>
