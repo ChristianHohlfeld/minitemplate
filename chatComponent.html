@@ -20,7 +20,7 @@
             }
         }
 
-        // Function to send a prompt
+        // Function to send a prompt to the AI endpoint
         async function sendPrompt() {
             const inputField = document.getElementById("userInput");
             const userMessage = inputField.value.trim();
@@ -36,15 +36,63 @@
             chatContainer.appendChild(loadingElement);
             scrollToBottom();
 
-            // Simulate AI response for demonstration
-            setTimeout(() => {
-                // Remove loading indicator
-                chatContainer.removeChild(loadingElement);
+            // Send the user message to the AI endpoint
+            const requestBody = {
+                model: "llama3.2:1b",
+                prompt: userMessage,
+                context: []
+            };
 
-                // Append AI response
-                appendMessage("This is a simulated response from the AI.", 'agent');
+            try {
+                const response = await fetch("http://localhost:11434/api/generate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // Handle streaming response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let done = false;
+                let tokenBuffer = '';
+                let aiResponseText = '';
+
+                while (!done) {
+                    const { value, done: readerDone } = await reader.read();
+                    done = readerDone;
+
+                    if (value) {
+                        tokenBuffer += decoder.decode(value, { stream: true });
+                        const tokens = tokenBuffer.split('\n');
+                        tokenBuffer = tokens.pop();
+
+                        tokens.forEach(token => {
+                            if (token.trim()) {
+                                try {
+                                    const parsed = JSON.parse(token);
+                                    aiResponseText += parsed.response;
+                                    loadingElement.textContent = aiResponseText; // Update loading element content
+                                    scrollToBottom(); // Ensure autoscroll during streaming
+                                } catch (error) {
+                                    console.error("Error parsing token:", error);
+                                }
+                            }
+                        });
+                    }
+                }
+
+                // Replace the loading element with the final AI response
+                loadingElement.textContent = aiResponseText;
                 scrollToBottom();
-            }, 1000);
+
+            } catch (error) {
+                loadingElement.textContent = `Error: ${error.message}`;
+                scrollToBottom();
+            }
         }
 
         // Function to create a message element with DaisyUI chat classes
@@ -58,7 +106,6 @@
                 bubbleElement.textContent = message;
                 messageElement.appendChild(bubbleElement);
             } else {
-                // AI message without a bubble
                 messageElement.textContent = message;
                 messageElement.classList.add("text-secondary-content");
             }
@@ -70,9 +117,9 @@
         function createLoadingElement() {
             const loadingElement = document.createElement("div");
             loadingElement.classList.add("chat", "chat-start");
-            const bubbleElement = document.createElement("div");
-            bubbleElement.classList.add("loading", "loading-ring", "loading-xs");
-            loadingElement.appendChild(bubbleElement);
+            const spinnerElement = document.createElement("span");
+            spinnerElement.classList.add("loading", "loading-ring", "loading-sm");
+            loadingElement.appendChild(spinnerElement);
             return loadingElement;
         }
 
