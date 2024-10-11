@@ -13,6 +13,9 @@
     </div>
 
     <script>
+        // Global variable to hold conversation context
+        let context = [];
+
         // Function to handle Enter key press for sending messages
         function handleKeyPress(event) {
             if (event.key === "Enter") {
@@ -36,11 +39,11 @@
             chatContainer.appendChild(loadingElement);
             scrollToBottom();
 
-            // Send the user message to the AI endpoint
+            // Send the user message to the AI endpoint along with the context
             const requestBody = {
                 model: "llama3.2:1b",
                 prompt: userMessage,
-                context: []
+                context: context  // Include the context from previous conversations
             };
 
             try {
@@ -77,6 +80,11 @@
                                     aiResponseText += parsed.response;
                                     loadingElement.textContent = aiResponseText; // Update loading element content
                                     scrollToBottom(); // Ensure autoscroll during streaming
+
+                                    // Update the context from the response
+                                    if (parsed.context) {
+                                        context = parsed.context;  // Save new context
+                                    }
                                 } catch (error) {
                                     console.error("Error parsing token:", error);
                                 }
