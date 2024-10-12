@@ -1,0 +1,87 @@
+<div id="loginComponent" class="flex flex-col justify-center items-center w-full h-full bg-gray-800 text-white">
+    <div id="loginScreen" class="login-center">
+        <div class="welcome-message text-2xl mb-5">Welcome to the Chat Interface</div>
+        <button class="auth-button btn btn-primary" id="centerLoginButton">Login</button>
+    </div>
+
+    <!-- Sidebar for Chat History -->
+    <div class="sidebar hidden" id="sidebar">
+        <div class="sidebar-header flex justify-between items-center p-3 bg-gray-900">
+            <h1 class="text-lg text-white">Chat History</h1>
+        </div>
+        <div class="history-list p-2" id="historyList">
+            <!-- Chat history will be dynamically rendered here -->
+        </div>
+    </div>
+
+    <div class="chat-wrapper flex-grow hidden" id="chatWrapper">
+        <div class="top-bar flex justify-between items-center p-3 bg-gray-900">
+            <div class="chat-title text-lg text-white">Chat Interface</div>
+            <div class="logout-menu flex items-center cursor-pointer" id="logoutMenu">
+                <button id="logoutButton" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+
+        <div class="chat-container flex-grow overflow-auto bg-gray-700 p-4" id="chatContainer"></div>
+
+        <div class="input-bar-container flex justify-center p-2 bg-gray-800">
+            <div class="input-bar flex w-full max-w-2xl bg-gray-600 rounded-full shadow-lg">
+                <textarea id="userInput" class="input-field w-full p-3 bg-gray-600 text-white rounded-full focus:outline-none resize-none" placeholder="Type your message..."></textarea>
+                <button id="sendButton" class="send-button bg-blue-500 text-white rounded-full p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const chatWrapper = document.getElementById('chatWrapper');
+        const historyList = document.getElementById('historyList');
+        const chatContainer = document.getElementById('chatContainer');
+        const centerLoginButton = document.getElementById('centerLoginButton');
+        const logoutButton = document.getElementById('logoutButton');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Keycloak object is initialized in index.html
+            centerLoginButton.addEventListener('click', () => keycloak.login());
+
+            logoutButton.addEventListener('click', () => keycloak.logout({ redirectUri: window.location.href }));
+
+            renderChatHistory();
+        });
+
+        function renderChatHistory() {
+            historyList.innerHTML = ''; // Clear any existing history
+
+            const chatSessions = JSON.parse(localStorage.getItem('chatSessions')) || [];
+
+            chatSessions.forEach((session, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history-item', 'flex', 'justify-between', 'items-center', 'p-2', 'cursor-pointer');
+
+                const sessionName = document.createElement('span');
+                sessionName.textContent = session;
+
+                // Trash (delete) button
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('btn', 'btn-error', 'btn-sm', 'ml-2');
+                deleteButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                deleteButton.addEventListener('click', () => deleteChatSession(index));
+
+                historyItem.appendChild(sessionName);
+                historyItem.appendChild(deleteButton);
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        function deleteChatSession(index) {
+            let chatSessions = JSON.parse(localStorage.getItem('chatSessions')) || [];
+            chatSessions.splice(index, 1); // Remove the selected session
+            localStorage.setItem('chatSessions', JSON.stringify(chatSessions));
+            renderChatHistory(); // Re-render history after deletion
+        }
+    </script>
+</div>

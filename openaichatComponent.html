@@ -1,9 +1,19 @@
 <!-- openaichatComponent.html -->
 <div id="openaichatComponent" class="flex flex-col justify-between w-full h-full max-w-2xl mx-auto">
     <!-- Chat bubbles container (scrollable) -->
-    <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4">
+    <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4" onscroll="handleScroll()">
         <!-- Messages will be dynamically appended here -->
     </div>
+
+    <!-- Autoscroll button -->
+    <div id="autoscrollButtonContainer" class="flex justify-center mb-2">
+        <button id="autoscrollButton" class="btn btn-circle btn-sm" onclick="toggleAutoscroll()" style="visibility: hidden;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                <path d="M12 16l4-4h-3V4h-2v8H8l4 4z"/>
+            </svg>
+        </button>
+    </div>
+
     <!-- Chat input at the bottom -->
     <div class="p-4 border-t border-gray-200">
         <div class="flex items-center gap-2">
@@ -13,12 +23,42 @@
                 <!-- Add more models as needed -->
             </select>
             <input type="text" id="userInput" class="input input-bordered flex-grow" placeholder="Enter your message..." onkeypress="handleKeyPress(event)" />
-            <button class="btn " onclick="sendPrompt()">Send</button>
+            <button class="btn" onclick="sendPrompt()">Send</button>
         </div>
     </div>
 
     <script>
         let conversationHistory = [];
+        let autoscrollEnabled = true; // Autoscroll state
+
+        function handleScroll() {
+            const chatContainer = document.getElementById("chatContainer");
+            const scrollTop = chatContainer.scrollTop;
+            const scrollHeight = chatContainer.scrollHeight;
+            const clientHeight = chatContainer.clientHeight;
+
+            // Pause autoscroll if user scrolls up
+            autoscrollEnabled = (scrollHeight - scrollTop <= clientHeight);
+            toggleAutoscrollButtonVisibility();
+        }
+
+        function toggleAutoscroll() {
+            autoscrollEnabled = !autoscrollEnabled;
+            toggleAutoscrollButtonVisibility();
+            if (autoscrollEnabled) scrollToBottom(); // Resume autoscroll if enabled
+        }
+
+        function toggleAutoscrollButtonVisibility() {
+            const button = document.getElementById("autoscrollButton");
+            button.style.visibility = autoscrollEnabled ? "hidden" : "visible";
+        }
+
+        function scrollToBottom() {
+            if (autoscrollEnabled) {
+                const chatContainer = document.getElementById("chatContainer");
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
 
         function handleKeyPress(event) {
             if (event.key === "Enter") {
@@ -125,11 +165,6 @@
             const chatContainer = document.getElementById("chatContainer");
             chatContainer.appendChild(messageElement);
             scrollToBottom();
-        }
-
-        function scrollToBottom() {
-            const chatContainer = document.getElementById("chatContainer");
-            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     </script>
 </div>

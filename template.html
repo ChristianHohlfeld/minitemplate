@@ -8,14 +8,103 @@
     <!-- DaisyUI with Tailwind CDN -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.12/dist/full.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/keycloak-js@latest/dist/keycloak.min.js"></script>
+    <style>
+        /* Initially hide everything to avoid flicker */
+        #auth-content, #login-content {
+            display: none;
+        }
+    </style>
 </head>
 <body class="flex flex-col min-h-screen" data-theme="cyberpunk">
-    <div class="flex flex-1">
+    <!-- Components that will be hidden/shown based on authentication -->
+    <div id="auth-content" class="flex flex-1">
         <!-- Sidebar -->
         {{sidebarComponent}}
 
         <!-- Content -->
         {{contentComponent}}
     </div>
+
+    <!-- Login Prompt (initially hidden until authentication state is determined) -->
+    <div id="login-content" class="flex justify-center items-center h-full">
+        <div class="text-center">
+            <h1 class="text-2xl">Please Log In</h1>
+            <button class="btn btn-primary mt-4" id="loginButton">Login</button>
+        </div>
+    </div>
+
+    <!-- Logout Button (shown when logged in) -->
+    <div id="logout-content" class="hidden flex justify-end p-4">
+        <button class="btn btn-secondary" id="logoutButton">Logout</button>
+    </div>
+
+<script>
+    // Initialize Keycloak
+    const keycloak = new Keycloak({
+        url: 'https://identityserver.de',
+        realm: 'fakturaservice',
+        clientId: 'frontendserver-frontend'
+    });
+
+    // Function to handle UI updates based on authentication state
+    function updateUI(authenticated) {
+        if (authenticated) {
+            // Show authenticated content and logout button
+            document.getElementById('login-content').style.display = 'none';
+            document.getElementById('auth-content').style.display = 'flex';
+            document.getElementById('logout-content').classList.remove('hidden');
+        } else {
+            // Show login prompt
+            document.getElementById('login-content').style.display = 'flex';
+            document.getElementById('auth-content').style.display = 'none';
+            document.getElementById('logout-content').classList.add('hidden');
+        }
+    }
+
+    // Function to check if user is authenticated and render the correct state
+    function checkAuthentication() {
+        keycloak.init({ onLoad: 'check-sso', checkLoginIframe: false }).then(function(authenticated) {
+            if (authenticated) {
+                // Token is valid, render authenticated content
+                console.log('User authenticated, rendering page content.');
+                updateUI(true);
+            } else {
+                // Not authenticated, show login screen
+                console.log('User not authenticated, showing login screen.');
+                updateUI(false);
+            }
+        }).catch(function(error) {
+            console.error("Error during Keycloak initialization:", error);
+            document.getElementById('login-content').innerHTML = '<p>Unable to authenticate. Please try again later.</p>';
+            updateUI(false); // Fallback to login screen on error
+        });
+    }
+
+    // Check authentication status when the page loads
+    checkAuthentication();
+
+    // Set up login and logout button event handlers after initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up login button event
+        const loginButton = document.getElementById('loginButton');
+        if (loginButton) {
+            loginButton.addEventListener('click', function() {
+                console.log("Login button clicked. Triggering Keycloak login.");
+                keycloak.login();
+            });
+        }
+
+        // Set up logout button event
+        const logoutButton = document.getElementById('logoutButton');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function() {
+                console.log("Logout button clicked. Triggering Keycloak logout.");
+                keycloak.logout({ redirectUri: window.location.href });
+            });
+        }
+    });
+</script>
+
 </body>
 </html>
