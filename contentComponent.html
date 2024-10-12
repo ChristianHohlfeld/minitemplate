@@ -1,17 +1,12 @@
+<!-- contentComponent.html -->
 <div id="contentComponent" class="flex flex-col flex-1 transition-all duration-300 ease-in-out md:ml-64 h-screen">
-    <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4 bg-gray-800 text-white">
+    <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4">
         <div class="flex items-center space-x-4">
-            <button id="contentHamburger" class="toggleSidebarButton hidden" aria-label="Toggle Sidebar">
-                ☰
-            </button>
+            <button id="contentHamburger" class="toggleSidebarButton hidden" aria-label="Toggle Sidebar">☰</button>
             <h1 class="text-lg">Header</h1>
         </div>
-        <!-- Login/Logout Button -->
-        <div id="authButton" class="flex items-center">
-            <button id="logoutButton" class="btn btn-primary">
-                Logout
-            </button>
-        </div>
+        <!-- Logout button controlled by Keycloak -->
+        <button id="logoutButton" class="btn btn-secondary hidden mr-16">Logout</button>
     </header>
 
     <div class="flex flex-1 flex-col p-6 rounded-lg shadow overflow-hidden">
