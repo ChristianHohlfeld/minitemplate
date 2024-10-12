@@ -3,17 +3,13 @@
     <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4">
         <div class="flex items-center space-x-4">
             <button id="contentHamburger" class="toggleSidebarButton hidden" aria-label="Toggle Sidebar">☰</button>
-            <h1 class="text-lg">Header</h1>
+            <h1 class="text-lg">frontendserver.de</h1>
         </div>
         <!-- Logout button controlled by Keycloak -->
-        <button id="logoutButton" class="btn btn-secondary hidden mr-16px">Logout</button>
+        <button id="logoutButton" class="btn hidden mr-16px">Logout</button>
     </header>
 
     <div class="flex flex-1 flex-col p-6 rounded-lg shadow overflow-hidden">
         {{openaichatComponent}}
     </div>
-
-    <footer class="h-16 flex items-center justify-center">
-        <p class="text-lg">2023. All rights reserved.</p>
-    </footer>
 </div>

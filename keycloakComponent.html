@@ -2,17 +2,44 @@
 <div id="keycloakComponent" class="flex justify-end p-4">
     <!-- Login Button (initially shown if not logged in) -->
     <div id="login-content" class="flex justify-center items-center h-full">
-        <button class="btn btn-primary" id="loginButton">Login</button>
-    </div>
-
-    <!-- Logout Button (shown when logged in) -->
-    <div id="logout-content" class="hidden">
-        <button class="btn btn-secondary" id="logoutButtonSidebar">Logout</button>
+        <button class="btn" id="loginButton">Login</button>
     </div>
 </div>
 
 <script>
-    // Function to load the Keycloak library dynamically
+    // Function to check if Keycloak is already defined
+    function initializeKeycloak() {
+        if (typeof keycloak === 'undefined') {
+            const storedToken = localStorage.getItem('kcToken');
+            if (storedToken) {
+                keycloak = new Keycloak({
+                    url: 'https://identityserver.de',
+                    realm: 'fakturaservice',
+                    clientId: 'frontendserver-frontend',
+                    token: storedToken
+                });
+            } else {
+                keycloak = new Keycloak({
+                    url: 'https://identityserver.de',
+                    realm: 'fakturaservice',
+                    clientId: 'frontendserver-frontend'
+                });
+            }
+
+            keycloak.onTokenExpired = function() {
+                keycloak.updateToken(30).then(function(refreshed) {
+                    if (refreshed) {
+                        localStorage.setItem('kcToken', keycloak.token); // Store new token in local storage
+                    }
+                }).catch(function() {
+                    console.warn('Failed to refresh the token, or the session has expired');
+                    keycloak.logout();
+                });
+            };
+        }
+    }
+
+    // Load the Keycloak library dynamically
     function loadKeycloakScript() {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
@@ -26,28 +53,21 @@
     // Load the Keycloak script, then initialize Keycloak
     loadKeycloakScript()
         .then(() => {
-            const keycloak = new Keycloak({
-                url: 'https://identityserver.de',
-                realm: 'fakturaservice',
-                clientId: 'frontendserver-frontend'
-            });
+            initializeKeycloak();  // Ensure Keycloak is only initialized if not defined
 
             function updateUI(authenticated) {
-                const loginContent = document.getElementById('login-content');
-                const logoutContent = document.getElementById('logout-content');
+                const loginContent = document.getElementById('keycloakComponent');
                 const logoutButton = document.getElementById('logoutButton');
                 const authContent = document.getElementById('auth-content');
 
                 if (authenticated) {
                     loginContent.classList.add('hidden');
-                    logoutContent.classList.remove('hidden');
                     logoutButton.classList.remove('hidden');  // Show Logout button in header
 
                     // Show the authenticated content
                     authContent.classList.remove('hidden');
                 } else {
                     loginContent.classList.remove('hidden');
-                    logoutContent.classList.add('hidden');
                     logoutButton.classList.add('hidden');  // Hide Logout button in header
 
                     // Hide the authenticated content
@@ -57,12 +77,16 @@
 
             // Initialize Keycloak and update the UI accordingly
             keycloak.init({ onLoad: 'check-sso', checkLoginIframe: false })
-                .then(authenticated => updateUI(authenticated))
+                .then(authenticated => {
+                    updateUI(authenticated);
+                    if (authenticated) {
+                        localStorage.setItem('kcToken', keycloak.token);  // Store token in localStorage
+                    }
+                })
                 .catch(() => updateUI(false));
 
             document.getElementById('loginButton').addEventListener('click', () => keycloak.login());
             document.getElementById('logoutButton').addEventListener('click', () => keycloak.logout({ redirectUri: window.location.href }));
-            document.getElementById('logoutButtonSidebar').addEventListener('click', () => keycloak.logout({ redirectUri: window.location.href }));
         })
         .catch(error => {
             console.error(error.message);
