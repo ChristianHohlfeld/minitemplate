@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>frontendserver.de | chat-ai</title>
+<title>frontendserver.de | ai-chat</title>
 
     <!-- DaisyUI with Tailwind CDN -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.12/dist/full.min.css" rel="stylesheet" />
@@ -98,7 +98,14 @@
     <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4">
         <div class="flex items-center space-x-4">
             <button id="contentHamburger" class="toggleSidebarButton hidden" aria-label="Toggle Sidebar">☰</button>
-            <h1 class="text-lg">frontendserver.de</h1>
+            <h1 class="text-lg"><!-- modeldropdownComponent.html -->
+<div id="modeldropdownComponent" class="flex items-center gap-2">
+    <select id="modelSelect" class="input input-bordered">
+        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+        <option value="gpt-4o">GPT-4o</option>
+        <!-- Add more models as needed -->
+    </select>
+</div></h1>
         </div>
         <!-- Logout button controlled by Keycloak -->
         <button id="logoutButton" class="btn hidden mr-16px">Logout</button>
@@ -114,7 +121,7 @@
 
     <!-- Autoscroll button -->
     <div id="autoscrollButtonContainer" class="flex justify-center mb-2">
-        <button id="autoscrollButton" class="btn btn-circle btn-sm" onclick="toggleAutoscroll()" style="visibility: hidden;">
+        <button id="autoscrollButton" class="btn btn-circle btn-sm" onclick="enableAutoscroll()" style="visibility: hidden;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                 <path d="M12 16l4-4h-3V4h-2v8H8l4 4z"/>
             </svg>
@@ -125,14 +132,6 @@
     <div class="p-4 border-t border-gray-200">
         <div class="flex items-center gap-2">
             <!-- Include modelDropdown component here -->
-            <!-- modeldropdownComponent.html -->
-<div id="modeldropdownComponent" class="flex items-center gap-2">
-    <select id="modelSelect" class="input input-bordered">
-        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-        <option value="gpt-4o">GPT-4o</option>
-        <!-- Add more models as needed -->
-    </select>
-</div>
             <input type="text" id="userInput" class="input input-bordered flex-grow" placeholder="Enter your message..." onkeypress="handleKeyPress(event)" />
             <button class="btn" onclick="sendPrompt()">Send</button>
         </div>
@@ -148,14 +147,20 @@
             const scrollHeight = chatContainer.scrollHeight;
             const clientHeight = chatContainer.clientHeight;
 
-            autoscrollEnabled = (scrollHeight - scrollTop <= clientHeight);
-            toggleAutoscrollButtonVisibility();
+            // Check if the user has scrolled away from the bottom
+            if (scrollHeight - scrollTop > clientHeight + 10) {
+                autoscrollEnabled = false;
+                toggleAutoscrollButtonVisibility();
+            } else {
+                autoscrollEnabled = true;
+                toggleAutoscrollButtonVisibility();
+            }
         }
 
-        function toggleAutoscroll() {
-            autoscrollEnabled = !autoscrollEnabled;
+        function enableAutoscroll() {
+            autoscrollEnabled = true;
+            scrollToBottom();  // Immediately scroll to the bottom
             toggleAutoscrollButtonVisibility();
-            if (autoscrollEnabled) scrollToBottom();
         }
 
         function toggleAutoscrollButtonVisibility() {
@@ -164,8 +169,10 @@
         }
 
         function scrollToBottom() {
+            const chatContainer = document.getElementById("chatContainer");
+
+            // Continue to follow the scroll as new messages come in
             if (autoscrollEnabled) {
-                const chatContainer = document.getElementById("chatContainer");
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
         }
