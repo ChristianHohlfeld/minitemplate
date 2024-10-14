@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>frontendserver.de | ai-chat</title>
+<title>ai chat</title>
 
     <!-- DaisyUI with Tailwind CDN -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.12/dist/full.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="flex flex-col min-h-screen" data-theme="light">
+<body class="flex flex-col min-h-screen" data-theme="dark">
 
     <!-- Components that will be hidden/shown based on authentication -->
     <div id="auth-content" class="hidden flex-1">
@@ -131,7 +131,6 @@
     <!-- Chat input at the bottom -->
     <div class="p-4 border-t border-gray-200">
         <div class="flex items-center gap-2">
-            <!-- Include modelDropdown component here -->
             <input type="text" id="userInput" class="input input-bordered flex-grow" placeholder="Enter your message..." onkeypress="handleKeyPress(event)" />
             <button class="btn" onclick="sendPrompt()">Send</button>
         </div>
@@ -140,6 +139,15 @@
     <script>
         let conversationHistory = [];
         let autoscrollEnabled = true;
+
+        // Function to format the message before displaying
+        function formatMessage(message) {
+            // Convert newlines (\n) into <br> for line breaks
+            const formattedMessage = message
+                .replace(/\n/g, '<br>') // Handle line breaks
+                .replace(/(\.\s)/g, '$1<br>'); // Optionally handle periods followed by space
+            return formattedMessage;
+        }
 
         function handleScroll() {
             const chatContainer = document.getElementById("chatContainer");
@@ -255,7 +263,7 @@
                                 try {
                                     const parsed = JSON.parse(token);
                                     aiResponseText += parsed.response;
-                                    loadingElement.textContent = aiResponseText;
+                                    loadingElement.innerHTML = formatMessage(aiResponseText);
                                     scrollToBottom();
                                 } catch (error) {
                                     console.error("Error parsing token:", error);
@@ -265,20 +273,25 @@
                     }
                 }
 
-                loadingElement.textContent = aiResponseText;
+                loadingElement.innerHTML = formatMessage(aiResponseText);
                 conversationHistory.push({ role: 'assistant', content: aiResponseText });
 
             } catch (error) {
-                loadingElement.textContent = `Error: ${error.message}`;
+                loadingElement.innerHTML = `Error: ${error.message}`;
             }
         }
 
+        // Function to create a message element with DaisyUI chat classes
         function createMessageElement(message, sender) {
             const messageElement = document.createElement("div");
             messageElement.classList.add("chat", sender === 'user' ? "chat-end" : "chat-start");
+
             const bubbleElement = document.createElement("div");
             bubbleElement.classList.add("chat-bubble");
-            bubbleElement.textContent = message;
+
+            // Apply formatting using the formatMessage function
+            bubbleElement.innerHTML = formatMessage(message); // Use innerHTML to preserve formatting
+
             messageElement.appendChild(bubbleElement);
             return messageElement;
         }
