@@ -69,6 +69,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         if [[ -f "$COMPONENT_FILE" ]]; then
             echo "Processing component: $COMPONENT_ID"
             COMPONENT_CONTENT=$(<"$COMPONENT_FILE")
+
+            # Safely escape special characters like &
+            COMPONENT_CONTENT=$(echo "$COMPONENT_CONTENT" | sed 's/&/\\&/g')
+
             line="${line/\{\{$COMPONENT_ID\}\}/$COMPONENT_CONTENT}"
             echo "Replaced {{${COMPONENT_ID}}} successfully."
         else
