@@ -12,10 +12,11 @@
 <body class="flex flex-col min-h-screen" data-theme="cyberpunk">
 
     <!-- Components that will be hidden/shown based on authentication -->
-    <div id="auth-content" class="hidden flex-1">
+    <div class="flex-1">
         <!-- Sidebar -->
+    <div id="auth-sidebar">
         {{sidebarComponent}}
-
+    </div>
         {{contentComponent}}
     </div>
 

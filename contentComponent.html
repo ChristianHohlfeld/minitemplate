@@ -1,15 +1,14 @@
 <!-- contentComponent.html -->
 <div id="contentComponent" class="flex flex-col flex-1 transition-all duration-300 ease-in-out md:ml-64 h-dvh">
-    <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4">
-        <div class="flex items-center space-x-4">
-            <button id="contentHamburger" class="toggleSidebarButton hidden" aria-label="Toggle Sidebar">☰</button>
-            <h1 class="text-lg">{{modeldropdownComponent}}</h1>
-        </div>
-        <!-- Logout button controlled by Keycloak -->
-        <button id="logoutButton" class="btn hidden mr-16px">Logout</button>
-    </header>
+    {{headerComponent}}
 
-    <div class="flex flex-1 flex-col p-6 rounded-lg shadow overflow-hidden">
+    <div id="auth-content" class="hidden flex flex-1 flex-col p-6 rounded-lg shadow overflow-hidden">
         {{openaichatComponent}}
     </div>
+    <!-- Content Footer -->
+    <div class="p-4 h-5px flex items-center justify-center">
+        <p class="text-sm"></p>
+    </div>
+    <script>
+    </script>
 </div>

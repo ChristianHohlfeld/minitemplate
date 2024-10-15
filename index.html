@@ -9,11 +9,12 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.12/dist/full.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="flex flex-col min-h-screen" data-theme="dark">
+<body class="flex flex-col min-h-screen" data-theme="light">
 
     <!-- Components that will be hidden/shown based on authentication -->
-    <div id="auth-content" class="hidden flex-1">
+    <div class="flex-1">
         <!-- Sidebar -->
+    <div id="auth-sidebar">
         <!-- sidebarComponent.html -->
 <div id="sidebarComponent" data-state="closed" class="bg-base-100 base-content w-64 h-full fixed top-0 left-0 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-10">
     <!-- Sidebar Header -->
@@ -37,6 +38,11 @@
             <li>I'm your guide... 🗑</li>
         </ul>
     </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 h-5px flex items-center justify-center">
+        <p class="text-sm"></p>
+    </div>
 
     <!-- Self-contained JavaScript for Sidebar Toggle and Breakpoint Detection -->
     <script>
@@ -92,13 +98,14 @@
         });
     </script>
 </div>
-
+    </div>
         <!-- contentComponent.html -->
-<div id="contentComponent" class="flex flex-col flex-1 transition-all duration-300 ease-in-out md:ml-64 h-screen">
-    <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4">
-        <div class="flex items-center space-x-4">
-            <button id="contentHamburger" class="toggleSidebarButton hidden" aria-label="Toggle Sidebar">☰</button>
-            <h1 class="text-lg"><!-- modeldropdownComponent.html -->
+<div id="contentComponent" class="flex flex-col flex-1 transition-all duration-300 ease-in-out md:ml-64 h-dvh">
+    <div id="headerComponent">
+        <header id="contentHeader" class="h-16 flex items-center justify-between w-full p-0 px-4">
+            <div class="flex items-center space-x-4">
+                <button id="contentHamburger" class="toggleSidebarButton hidden" aria-label="Toggle Sidebar">☰</button>
+                <h1 id="auth-modeldropdown" class="text-lg"><!-- modeldropdownComponent.html -->
 <div id="modeldropdownComponent" class="flex items-center gap-2">
     <select id="modelSelect" class="input input-bordered">
         <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
@@ -106,12 +113,107 @@
         <!-- Add more models as needed -->
     </select>
 </div></h1>
-        </div>
-        <!-- Logout button controlled by Keycloak -->
-        <button id="logoutButton" class="btn hidden mr-16px">Logout</button>
-    </header>
+            </div>
+            <!-- keycloakComponent.html -->
+<div id="keycloakComponent">
+    <button id="loginButton" class="btn mr-16px">Login</button>
+    <script>
+        // Function to check if Keycloak is already defined
+        function initializeKeycloak() {
+            if (typeof keycloak === 'undefined') {
+                const storedToken = localStorage.getItem('kcToken');
+                if (storedToken) {
+                    keycloak = new Keycloak({
+                        url: 'https://identityserver.de',
+                        realm: 'fakturaservice',
+                        clientId: 'frontendserver-frontend',
+                        token: storedToken
+                    });
+                } else {
+                    keycloak = new Keycloak({
+                        url: 'https://identityserver.de',
+                        realm: 'fakturaservice',
+                        clientId: 'frontendserver-frontend'
+                    });
+                }
 
-    <div class="flex flex-1 flex-col p-6 rounded-lg shadow overflow-hidden">
+                keycloak.onTokenExpired = function () {
+                    keycloak.updateToken(30).then(function (refreshed) {
+                        if (refreshed) {
+                            localStorage.setItem('kcToken', keycloak.token); // Store new token in local storage
+                        }
+                    }).catch(function () {
+                        console.warn('Failed to refresh the token, or the session has expired');
+                        keycloak.logout();
+                    });
+                };
+            }
+        }
+
+        // Load the Keycloak library dynamically
+        function loadKeycloakScript() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = "https://cdn.jsdelivr.net/npm/keycloak-js@latest/dist/keycloak.min.js";
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error('Failed to load Keycloak script'));
+                document.head.appendChild(script);
+            });
+        }
+
+        // Update UI based on authentication state
+        function updateUI(authenticated) {
+            const authContent = document.getElementById('auth-content');
+            const authSidebar = document.getElementById('auth-sidebar');
+            const authModeldropdown = document.getElementById('auth-modeldropdown');      
+            const loginButton = document.getElementById('loginButton');
+
+            if (authenticated) {
+                loginButton.textContent = 'Logout';
+                // Add event listener for logout
+                loginButton.addEventListener('click', () => keycloak.logout({ redirectUri: window.location.href }));
+                // Show the authenticated content
+                authSidebar.classList.remove('hidden');
+                authContent.classList.remove('hidden');
+                authModeldropdown.classList.remove('hidden');
+            } else {
+                loginButton.textContent = 'Login';
+                // Add event listener for login
+                loginButton.addEventListener('click', () => keycloak.login());
+                // Hide the authenticated content
+                authSidebar.classList.add('hidden');
+                authContent.classList.add('hidden');
+	        authModeldropdown.classList.add('hidden');
+            }
+        }
+
+        // Load the Keycloak script, then initialize Keycloak
+        loadKeycloakScript()
+            .then(() => {
+                initializeKeycloak();  // Ensure Keycloak is only initialized if not defined
+
+                // Initialize Keycloak and update the UI accordingly
+                keycloak.init({ onLoad: 'check-sso', checkLoginIframe: false })
+                    .then(authenticated => {
+                        updateUI(authenticated);
+                        if (authenticated) {
+                            localStorage.setItem('kcToken', keycloak.token);  // Store token in localStorage
+                        }
+                    })
+                    .catch(() => updateUI(false));
+
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
+    </script>
+</div>
+        </header>
+   <script>
+   </script>
+</div>
+
+    <div id="auth-content" class="hidden flex flex-1 flex-col p-6 rounded-lg shadow overflow-hidden">
         <!-- openaichatComponent.html -->
 <div id="openaichatComponent" class="flex flex-col justify-between w-full h-full max-w-2xl mx-auto">
     <!-- Chat bubbles container (scrollable) -->
@@ -329,104 +431,110 @@
     </script>
 </div>
     </div>
+    <!-- Content Footer -->
+    <div class="p-4 h-5px flex items-center justify-center">
+        <p class="text-sm"></p>
+    </div>
+    <script>
+    </script>
 </div>
     </div>
 
     <!-- Keycloak Login/Logout Component placed in the header, top-right -->
     <!-- keycloakComponent.html -->
-<div id="keycloakComponent" class="flex justify-end p-4">
-    <!-- Login Button (initially shown if not logged in) -->
-    <div id="login-content" class="flex justify-center items-center h-full">
-        <button class="btn" id="loginButton">Login</button>
-    </div>
-</div>
-
-<script>
-    // Function to check if Keycloak is already defined
-    function initializeKeycloak() {
-        if (typeof keycloak === 'undefined') {
-            const storedToken = localStorage.getItem('kcToken');
-            if (storedToken) {
-                keycloak = new Keycloak({
-                    url: 'https://identityserver.de',
-                    realm: 'fakturaservice',
-                    clientId: 'frontendserver-frontend',
-                    token: storedToken
-                });
-            } else {
-                keycloak = new Keycloak({
-                    url: 'https://identityserver.de',
-                    realm: 'fakturaservice',
-                    clientId: 'frontendserver-frontend'
-                });
-            }
-
-            keycloak.onTokenExpired = function() {
-                keycloak.updateToken(30).then(function(refreshed) {
-                    if (refreshed) {
-                        localStorage.setItem('kcToken', keycloak.token); // Store new token in local storage
-                    }
-                }).catch(function() {
-                    console.warn('Failed to refresh the token, or the session has expired');
-                    keycloak.logout();
-                });
-            };
-        }
-    }
-
-    // Load the Keycloak library dynamically
-    function loadKeycloakScript() {
-        return new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = "https://cdn.jsdelivr.net/npm/keycloak-js@latest/dist/keycloak.min.js";
-            script.onload = () => resolve();
-            script.onerror = () => reject(new Error('Failed to load Keycloak script'));
-            document.head.appendChild(script);
-        });
-    }
-
-    // Load the Keycloak script, then initialize Keycloak
-    loadKeycloakScript()
-        .then(() => {
-            initializeKeycloak();  // Ensure Keycloak is only initialized if not defined
-
-            function updateUI(authenticated) {
-                const loginContent = document.getElementById('keycloakComponent');
-                const logoutButton = document.getElementById('logoutButton');
-                const authContent = document.getElementById('auth-content');
-
-                if (authenticated) {
-                    loginContent.classList.add('hidden');
-                    logoutButton.classList.remove('hidden');  // Show Logout button in header
-
-                    // Show the authenticated content
-                    authContent.classList.remove('hidden');
+<div id="keycloakComponent">
+    <button id="loginButton" class="btn mr-16px">Login</button>
+    <script>
+        // Function to check if Keycloak is already defined
+        function initializeKeycloak() {
+            if (typeof keycloak === 'undefined') {
+                const storedToken = localStorage.getItem('kcToken');
+                if (storedToken) {
+                    keycloak = new Keycloak({
+                        url: 'https://identityserver.de',
+                        realm: 'fakturaservice',
+                        clientId: 'frontendserver-frontend',
+                        token: storedToken
+                    });
                 } else {
-                    loginContent.classList.remove('hidden');
-                    logoutButton.classList.add('hidden');  // Hide Logout button in header
-
-                    // Hide the authenticated content
-                    authContent.classList.add('hidden');
+                    keycloak = new Keycloak({
+                        url: 'https://identityserver.de',
+                        realm: 'fakturaservice',
+                        clientId: 'frontendserver-frontend'
+                    });
                 }
+
+                keycloak.onTokenExpired = function () {
+                    keycloak.updateToken(30).then(function (refreshed) {
+                        if (refreshed) {
+                            localStorage.setItem('kcToken', keycloak.token); // Store new token in local storage
+                        }
+                    }).catch(function () {
+                        console.warn('Failed to refresh the token, or the session has expired');
+                        keycloak.logout();
+                    });
+                };
             }
+        }
 
-            // Initialize Keycloak and update the UI accordingly
-            keycloak.init({ onLoad: 'check-sso', checkLoginIframe: false })
-                .then(authenticated => {
-                    updateUI(authenticated);
-                    if (authenticated) {
-                        localStorage.setItem('kcToken', keycloak.token);  // Store token in localStorage
-                    }
-                })
-                .catch(() => updateUI(false));
+        // Load the Keycloak library dynamically
+        function loadKeycloakScript() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = "https://cdn.jsdelivr.net/npm/keycloak-js@latest/dist/keycloak.min.js";
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error('Failed to load Keycloak script'));
+                document.head.appendChild(script);
+            });
+        }
 
-            document.getElementById('loginButton').addEventListener('click', () => keycloak.login());
-            document.getElementById('logoutButton').addEventListener('click', () => keycloak.logout({ redirectUri: window.location.href }));
-        })
-        .catch(error => {
-            console.error(error.message);
-        });
-</script>
+        // Update UI based on authentication state
+        function updateUI(authenticated) {
+            const authContent = document.getElementById('auth-content');
+            const authSidebar = document.getElementById('auth-sidebar');
+            const authModeldropdown = document.getElementById('auth-modeldropdown');      
+            const loginButton = document.getElementById('loginButton');
+
+            if (authenticated) {
+                loginButton.textContent = 'Logout';
+                // Add event listener for logout
+                loginButton.addEventListener('click', () => keycloak.logout({ redirectUri: window.location.href }));
+                // Show the authenticated content
+                authSidebar.classList.remove('hidden');
+                authContent.classList.remove('hidden');
+                authModeldropdown.classList.remove('hidden');
+            } else {
+                loginButton.textContent = 'Login';
+                // Add event listener for login
+                loginButton.addEventListener('click', () => keycloak.login());
+                // Hide the authenticated content
+                authSidebar.classList.add('hidden');
+                authContent.classList.add('hidden');
+	        authModeldropdown.classList.add('hidden');
+            }
+        }
+
+        // Load the Keycloak script, then initialize Keycloak
+        loadKeycloakScript()
+            .then(() => {
+                initializeKeycloak();  // Ensure Keycloak is only initialized if not defined
+
+                // Initialize Keycloak and update the UI accordingly
+                keycloak.init({ onLoad: 'check-sso', checkLoginIframe: false })
+                    .then(authenticated => {
+                        updateUI(authenticated);
+                        if (authenticated) {
+                            localStorage.setItem('kcToken', keycloak.token);  // Store token in localStorage
+                        }
+                    })
+                    .catch(() => updateUI(false));
+
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
+    </script>
+</div>
 
 </body>
 </html>
