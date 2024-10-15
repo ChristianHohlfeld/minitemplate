@@ -2,9 +2,11 @@
 <div id="keycloakComponent">
     <button id="loginButton" class="btn mr-16px">Login</button>
     <script>
+        let keycloakInitialized = false;  // Global flag to track if Keycloak is initialized
+
         // Function to check if Keycloak is already defined
         function initializeKeycloak() {
-            if (typeof keycloak === 'undefined') {
+            if (typeof keycloak === 'undefined' && !keycloakInitialized) {
                 const storedToken = localStorage.getItem('kcToken');
                 if (storedToken) {
                     keycloak = new Keycloak({
@@ -31,17 +33,23 @@
                         keycloak.logout();
                     });
                 };
+
+                keycloakInitialized = true;  // Mark Keycloak as initialized
             }
         }
 
         // Load the Keycloak library dynamically
         function loadKeycloakScript() {
             return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = "https://cdn.jsdelivr.net/npm/keycloak-js@latest/dist/keycloak.min.js";
-                script.onload = () => resolve();
-                script.onerror = () => reject(new Error('Failed to load Keycloak script'));
-                document.head.appendChild(script);
+                if (document.querySelector('script[src="https://cdn.jsdelivr.net/npm/keycloak-js@latest/dist/keycloak.min.js"]')) {
+                    resolve();  // Script already loaded
+                } else {
+                    const script = document.createElement('script');
+                    script.src = "https://cdn.jsdelivr.net/npm/keycloak-js@latest/dist/keycloak.min.js";
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error('Failed to load Keycloak script'));
+                    document.head.appendChild(script);
+                }
             });
         }
 
@@ -49,7 +57,7 @@
         function updateUI(authenticated) {
             const authContent = document.getElementById('auth-content');
             const authSidebar = document.getElementById('auth-sidebar');
-            const authModeldropdown = document.getElementById('auth-modeldropdown');      
+            const authModeldropdown = document.getElementById('auth-modeldropdown');
             const loginButton = document.getElementById('loginButton');
 
             if (authenticated) {
@@ -67,7 +75,7 @@
                 // Hide the authenticated content
                 authSidebar.classList.add('hidden');
                 authContent.classList.add('hidden');
-	        authModeldropdown.classList.add('hidden');
+                authModeldropdown.classList.add('hidden');
             }
         }
 
